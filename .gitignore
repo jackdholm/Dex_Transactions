@@ -1,1 +1,3 @@
 api_key_config.py
+*.csv
+/__pycache__
