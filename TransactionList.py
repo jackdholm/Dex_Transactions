@@ -41,8 +41,10 @@ def MakeDict(address, *lists):
             transactions[hash].received = i.copy()
     return transactions
 def GetTransactions(address, apiKey):
-    response = requests.get("https://api.etherscan.io/api?module=account&action=txlist&address=" + address + "&startblock=0&endblock=99999999&sort=asc&apikey=" + apiKey)
-    responseERC = requests.get("https://api.etherscan.io/api?module=account&action=tokentx&address=" + address + "&startblock=0&endblock=999999999&sort=asc&apikey=" + apiKey)
+    responseParams = dict(module = "account", apikey = apiKey, address = address, startblock = "0", endblock = "99999999", sort = "asc", action  = "txlist")
+    responseERCParams = dict(module = "account", apikey = apiKey, address = address, startblock = "0", endblock = "99999999", sort = "asc", action  = "tokentx")
+    response = requests.get("https://api.etherscan.io/api", params = responseParams)
+    responseERC = requests.get("https://api.etherscan.io/api", params = responseERCParams)
     print("Status Code: " + str(response.status_code))
     output = json.loads(response.text)
     outputERC = json.loads(responseERC.text)
