@@ -45,11 +45,14 @@ def GetTransactions(address, apiKey):
     responseERCParams = dict(module = "account", apikey = apiKey, address = address, startblock = "0", endblock = "99999999", sort = "asc", action  = "tokentx")
     response = requests.get("https://api.etherscan.io/api", params = responseParams)
     responseERC = requests.get("https://api.etherscan.io/api", params = responseERCParams)
-    print("Status Code: " + str(response.status_code))
+    
     output = json.loads(response.text)
     outputERC = json.loads(responseERC.text)
     ercList = outputERC['result']
     transactionList = output['result']
+    print("status: ", output['status'])
+    if not transactionList:
+        return []
     TxList = MakeDict(address, transactionList, ercList)
     outputList = []
     for i in TxList:
