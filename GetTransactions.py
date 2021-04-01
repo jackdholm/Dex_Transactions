@@ -8,7 +8,7 @@ def PrintRow(row):
         print(i, end = ",")
     print(row[len(row)-1])
 
-rowNames = ["Timestamp", "Asset Traded", "Cost", "Transaction Fee", "Amount Traded", "Asset Received", "Amount Received"]
+rowNames = ["Timestamp", "Asset Traded", "Cost", "Transaction Fee(ETH)", "Asset Received", "Amount Received"]
 
 if len(sys.argv) < 2:
     print ("Address argument required")

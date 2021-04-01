@@ -69,8 +69,7 @@ def GetTransactions(address, apiKey):
             cost = int(TxList[i].sent['value']) / 1000000000000000000
             gasPrice = int(TxList[i].sent['gasPrice']) / 1000000000000000000
             transactionFee = gasPrice * int(TxList[i].sent['gasUsed'])
-            amountTraded = cost + transactionFee
             amountReceived = int(TxList[i].received['value']) / 1000000000000000000
-            outputList.append([timeStamp, assetTraded, cost, transactionFee, amountTraded, assetReceived, amountReceived])
+            outputList.append([timeStamp, assetTraded, cost, transactionFee, assetReceived, amountReceived])
 
     return outputList
