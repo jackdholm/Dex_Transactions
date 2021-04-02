@@ -40,6 +40,7 @@ def MakeDict(address, *lists):
         else:
             transactions[hash].received = i.copy()
     return transactions
+
 def GetTransactions(address, apiKey):
     responseParams = dict(module = "account", apikey = apiKey, address = address, startblock = "0", endblock = "99999999", sort = "asc", action  = "txlist")
     responseERCParams = dict(module = "account", apikey = apiKey, address = address, startblock = "0", endblock = "99999999", sort = "asc", action  = "tokentx")
@@ -60,16 +61,20 @@ def GetTransactions(address, apiKey):
             timeStamp = datetime.datetime.utcfromtimestamp(int(TxList[i].sent['timeStamp']))
             if 'tokenSymbol' in TxList[i].sent:
                 assetTraded = TxList[i].sent['tokenSymbol']
+                decimal = int(TxList[i].sent['tokenDecimal'])
             else:
                 assetTraded = 'ETH'
+                decimal = 18
             if 'tokenSymbol' in TxList[i].received:
                 assetReceived = TxList[i].received['tokenSymbol']
+                decimal = int(TxList[i].received['tokenDecimal'])
             else:
                 assetReceived = 'ETH'
-            cost = int(TxList[i].sent['value']) / 1000000000000000000
+                decimal = 18
+            cost = int(TxList[i].sent['value']) / 10 ** decimal
             gasPrice = int(TxList[i].sent['gasPrice']) / 1000000000000000000
             transactionFee = gasPrice * int(TxList[i].sent['gasUsed'])
-            amountReceived = int(TxList[i].received['value']) / 1000000000000000000
+            amountReceived = int(TxList[i].received['value']) / 10 ** decimal
             outputList.append([timeStamp, assetTraded, cost, transactionFee, assetReceived, amountReceived])
 
     return outputList
