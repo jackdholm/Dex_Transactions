@@ -1,4 +1,4 @@
-api_key_config.py
+api_config.py
 *.csv
 /__pycache__
 *.zip

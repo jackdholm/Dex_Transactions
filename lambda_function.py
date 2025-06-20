@@ -1,4 +1,4 @@
-import api_key_config
+import api_config
 import TransactionList
 import csv
 import io
@@ -13,12 +13,15 @@ def lambda_handler(event, context):
         address = params.get("address")
         if address == None or address == "":
             return {
+                'Access-Control-Allow-Origin': api_config.ORIGIN,
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Methods': 'GET',
                 'statusCode': 400,
                 'headers': { 'Content-Type': 'application/json' },
                 'body': json.dumps({"error": "Address argument required"})
             }
             
-        txList = TransactionList.GetTransactions(address, api_key_config.API_KEY)
+        txList = TransactionList.GetTransactions(address, api_config.API_KEY)
         
         csv_buffer = io.StringIO()
         writer = csv.writer(csv_buffer)
@@ -32,6 +35,9 @@ def lambda_handler(event, context):
         return {
             'statusCode': 200,
             'headers': {
+                'Access-Control-Allow-Origin': api_config.ORIGIN,
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Methods': 'GET',
                 'Content-Type': 'text/csv',
                 'Content-Disposition': f'attachment; filename="{filename}"'
             },
@@ -42,6 +48,11 @@ def lambda_handler(event, context):
         # Return error details for debugging
         return {
             'statusCode': 500,
-            'headers': { 'Content-Type': 'application/json' },
+            'headers': { 
+                'Access-Control-Allow-Origin': api_config.ORIGIN,
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Methods': 'GET',
+                'Content-Type': 'application/json'
+            },
             'body': json.dumps({ "error": str(e) })
         }
