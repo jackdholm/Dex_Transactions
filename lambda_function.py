@@ -1,5 +1,6 @@
 import api_config
 import TransactionList
+import rate_limit
 import csv
 import io
 import base64
@@ -7,6 +8,18 @@ import json
 
 filename = "Transaction_List.csv"
 def lambda_handler(event, context):
+    ip = event["requestContext"]["http"]["sourceIp"]
+    id_value = f"ip-{ip}"
+    if rate_limit.is_rate_limited(id_value):
+        return {
+            'statusCode': 429,
+            'headers': { 'Access-Control-Allow-Origin': api_config.ORIGIN,
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Methods': 'GET' },
+            'body': json.dumps({"error": "Rate limit exceeded"})
+        }
+    rate_limit.record_request(id_value)
+
     try:
         rowNames = ["Timestamp", "Asset Traded", "Cost", "Transaction Fee(ETH)", "Asset Received", "Amount Received"]
         params = event.get("queryStringParameters") or {}
