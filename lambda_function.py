@@ -8,6 +8,7 @@ import json
 
 filename = "Transaction_List.csv"
 def lambda_handler(event, context):
+    print("Event: ", event)
     ip = event["requestContext"]["http"]["sourceIp"]
     id_value = f"ip-{ip}"
     if rate_limit.is_rate_limited(id_value):
@@ -19,7 +20,7 @@ def lambda_handler(event, context):
             'body': json.dumps({"error": "Rate limit exceeded"})
         }
     rate_limit.record_request(id_value)
-
+    print("Retrieving transactions...")
     try:
         rowNames = ["Timestamp", "Asset Traded", "Cost", "Transaction Fee(ETH)", "Asset Received", "Amount Received"]
         params = event.get("queryStringParameters") or {}
@@ -33,9 +34,9 @@ def lambda_handler(event, context):
                 'headers': { 'Content-Type': 'application/json' },
                 'body': json.dumps({"error": "Address argument required"})
             }
-            
+        print("Getting transactions from " + address)
         txList = TransactionList.GetTransactions(address, api_config.API_KEY)
-        
+        print("Writing transaction list to file...")
         csv_buffer = io.StringIO()
         writer = csv.writer(csv_buffer)
         writer.writerow(rowNames)
@@ -58,6 +59,7 @@ def lambda_handler(event, context):
             'isBase64Encoded': True
         }
     except Exception as e:
+        print("ERROR: ", e)
         # Return error details for debugging
         return {
             'statusCode': 500,

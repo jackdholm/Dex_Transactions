@@ -49,6 +49,17 @@ def GetTransactions(address, apiKey):
     
     output = json.loads(response.text)
     outputERC = json.loads(responseERC.text)
+    print("Output: ", output)
+    if output['status'] != '1':
+        error_msg = output.get('message', output.get('result', 'Unknown error'))
+        print(f"Etherscan API error: {error_msg}")
+        raise Exception(f"Etherscan API error: {error_msg}")
+
+    if outputERC['status'] != '1':
+        error_msg = outputERC.get('message', outputERC.get('result', 'Unknown error'))
+        print(f"Etherscan ERC API error: {error_msg}")
+        raise Exception(f"Etherscan ERC API error: {error_msg}")
+
     ercList = outputERC['result']
     transactionList = output['result']
     print("status: ", output['status'])
